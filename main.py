@@ -21,9 +21,9 @@ class Player:
         self.etat = "vivant"
 
     def main(self, display) : #Fonction qui va s'occuper de toutes les actions du joueur
-        pygame.draw.rect(display, (0, 0, 255), (self.x, self.y, self.width, self.height))
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-        for balle in balles_ennemis :
+        pygame.draw.rect(display, (0, 0, 255), (self.x, self.y, self.width, self.height)) #Dessine le carré
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height) #Actualise la hitbox
+        for balle in balles_ennemis : #Regarde s'il se fait toucher par une balle ennemie
             if self.rect.colliderect(balle.rect) :
                 self.etat = "mort"
 
@@ -44,10 +44,10 @@ class Balle_Joueur:
 
 
     def main(self, display) : #Fonction qui s'occupe des action de la balle
-        self.x -= int(self.x_vel)
+        self.x -= int(self.x_vel) #Déplacement de la balle
         self.y -= int(self.y_vel)
-        pygame.draw.circle(display, (0, 0, 0), (self.x, self.y), 5)
-        self.rect = pygame.Rect(self.x, self.y, 5, 5)
+        pygame.draw.circle(display, (0, 0, 0), (self.x, self.y), 5) # Dessin de la balle
+        self.rect = pygame.Rect(self.x, self.y, 5, 5) #Actualisation de la hitbox
 
 #Instanciation de la classe Ennemi
 class Ennemi:
@@ -167,9 +167,6 @@ myfont = pygame.font.SysFont("monospace", 30)
 score_display = myfont.render(str(score), 1, (255,255,0))
 display.blit(score_display, (0, 0))
 meilleur_score_display =  0
-
-
-
 
 #ennemis.append(Tireur_Ennemi(random.randint(20, 780), random.randint(20, 580), 20, 20))
 t_ennemi = random.randint(1, 10)
