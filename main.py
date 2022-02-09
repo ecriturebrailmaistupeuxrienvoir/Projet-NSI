@@ -6,7 +6,7 @@ import math
 import random
 import bdd_main
 
-import sqlite3
+
 
 
 
@@ -35,15 +35,17 @@ class Player:
         rel_x, rel_y = mouse_x - self.x, mouse_y - self.y
         angle = (180/math.pi) * -math.atan2(rel_y, rel_x)
 
+        
         self.image = pygame.transform.rotate(images_joueur[self.animation], angle)
          
         self.rect.x = self.x
         self.rect.y = self.y
-        display.blit(self.image, self.rect)
 
     def main(self, display) : #Fonction qui va s'occuper de toutes les actions du joueur
         self.rect = self.image.get_rect()
         self.animation_joueur(display)
+        #pygame.draw.rect(display, (255, 0, 0), (self.rect))
+        display.blit(self.image, self.rect)
         for balle in balles_ennemis : #Regarde s'il se fait toucher par une balle ennemie
             if self.rect.colliderect(balle.rect) :
                 self.etat = "mort"
@@ -316,7 +318,7 @@ texte_debut = myfont.render(str("Appuyez sur Espace pour commencer"), 1, (0,0,0)
 display.blit(texte_debut, (300, 400))
 debut = True
 
-ennemis.append(Boss(random.choice(pos_x), random.choice(pos_y), 50, 50))
+pseudo = str(input("Veuillez entrer votre pseudo"))
 
 #Ecran de début
 while debut == True :
@@ -349,7 +351,7 @@ while True:
 
     mouse_x, mouse_y = pygame.mouse.get_pos() 
     
-    """
+    
     if len(ennemis) == 0 :
         vague += 1
         if vague == 21 :
@@ -364,17 +366,18 @@ while True:
                 else :
                     ennemis.append(Dash(random.choice(pos_x), random.choice(pos_y), 20, 20))
         vague += 1
-    """
+    
 
     for event in pygame.event.get(): #Récupération des evenements
         if event.type == pygame.QUIT : #Permet de quitter proprement pygame
+            print(score, pseudo)
+            bdd_main.enregistrer_score(score, pseudo)
             sys.exit()
         
         if event.type == pygame.MOUSEBUTTONDOWN : #Permet de savoir si un bouton de la souris a été pressé
             if event.button == 1:
                 balles_joueur.append(Balle_Joueur(player.x, player.y, mouse_x, mouse_y )) #Crée une balle et l'ajoute dans la liste des balles
                 player.arme = "tir"
-                print("tir")
                 player.tick = 0
 
     keys = pygame.key.get_pressed() #Récupère toutes les touches qui ont été pressées
@@ -462,14 +465,7 @@ while True:
         if boss_2.health == 0 :
             boss.remove(boss_2)
     
-    file = open("meilleurs_scores.txt", "r+") #Permet de récupérer l'information du meilleur score dans le fichier meilleurs_scores.txt
-    best_score = int(file.readline())
-    
-    # Si le score du joueur est meilleur que le meilleur score on actualise le meilleur score
-    if score > best_score:
-        file = open("meilleurs_scores.txt", "w")
-        file.write(str(score))
-        file.close()
+    best_score = bdd_main.meilleur_score()
 
     meilleur_score_display = myfont.render(str(best_score), 1, (255,255,255)) 
     display.blit(meilleur_score_display, (0, 30))
@@ -485,7 +481,8 @@ while True:
 
             for event in pygame.event.get(): #Récupération des evenements
                 if event.type == pygame.QUIT : #Permet de quitter proprement pygame
-                    bdd_main.enregistrer_score(score)
+                    print("appel fonction enregistrer")
+                    bdd_main.enregistrer_score(score, pseudo)
                     sys.exit()
             
     clock.tick(60) #Permet de faire tourner le jeu à 60 fps
